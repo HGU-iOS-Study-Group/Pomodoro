@@ -56,7 +56,6 @@ final class DayViewController: UIViewController {
             MySection.SecondItem(value: "두 번째 레이아웃"),
         ])
     ]
-    
     private var selectedDate = Date() {
         didSet{
             updateSelectedDateFormat()
