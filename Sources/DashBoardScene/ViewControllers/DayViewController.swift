@@ -11,6 +11,43 @@ import SnapKit
 
 final class DayViewController: UIViewController {
     
+    private var date = Date()
+    private let calendar = Calendar.current
+    private let dateFormatter = DateFormatter().then {
+        $0.dateStyle = .long
+        $0.dateFormat = "MM월-dd일 오늘"
+    }
+    private lazy var dateLabel = UILabel().then {
+        $0.text = dateFormatter.string(from: date)
+        $0.textAlignment = .center
+        $0.textColor = .black
+    }
+    private lazy var previousButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "arrowtriangle.backward")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        $0.addTarget(self, action: #selector(goToPreviousDay), for: .touchUpInside)
+    }
+    private lazy var nextButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "arrowtriangle.right")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        $0.addTarget(self, action: #selector(goToNextDay), for: .touchUpInside)
+    }
+    
+    private lazy var collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.getLayout()).then {
+        $0.isScrollEnabled = true
+        $0.showsHorizontalScrollIndicator = false
+        $0.showsVerticalScrollIndicator = true
+        $0.contentInset = .zero
+        $0.clipsToBounds = true
+        $0.register(FirstCell.self, forCellWithReuseIdentifier: "FirstCell")
+        $0.register(SecondCell.self, forCellWithReuseIdentifier: "SecondCell")
+    }
+    private let dataSource: [MySection] = [
+        .first([
+            MySection.FirstItem(value: "첫 레이아웃"),
+        ]),
+        .second([
+            MySection.SecondItem(value: "두 번째 레이아웃"),
+        ])
+    ]
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -19,14 +56,6 @@ final class DayViewController: UIViewController {
         setupCollectionView()
     }
     
-    private let dateLabel = UILabel().then {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .long
-        dateFormatter.dateFormat = .none
-        $0.text = dateFormatter.string(from: Date())
-        $0.textAlignment = .center
-        $0.textColor = .black
-    }
     private func setupDateLabel() {
         view.addSubview(dateLabel)
         dateLabel.snp.makeConstraints{ make in
@@ -35,12 +64,6 @@ final class DayViewController: UIViewController {
         }
     }
     
-    private let previousButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "arrowtriangle.backward")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
-    }
-    private let nextButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "arrowtriangle.right")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
-    }
     private func setupArrowButtons() {
         view.addSubview(previousButton)
         view.addSubview(nextButton)
@@ -53,6 +76,7 @@ final class DayViewController: UIViewController {
             make.leading.equalTo(dateLabel.snp.trailing).offset(10)
         }
     }
+    
     private func getLayout() -> UICollectionViewCompositionalLayout {
         UICollectionViewCompositionalLayout { (section, _) -> NSCollectionLayoutSection? in
             
@@ -88,24 +112,6 @@ final class DayViewController: UIViewController {
         }
     }
     
-    private lazy var collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.getLayout()).then {
-        $0.isScrollEnabled = true
-        $0.showsHorizontalScrollIndicator = false
-        $0.showsVerticalScrollIndicator = true
-        $0.contentInset = .zero
-        $0.clipsToBounds = true
-        $0.register(FirstCell.self, forCellWithReuseIdentifier: "FirstCell")
-        $0.register(SecondCell.self, forCellWithReuseIdentifier: "SecondCell")
-    }
-    private let dataSource: [MySection] = [
-        .first([
-            MySection.FirstItem(value: "첫 레이아웃"),
-        ]),
-        .second([
-            MySection.SecondItem(value: "두 번째 레이아웃"),
-        ])
-    ]
-    
     private func setupCollectionView () {
         view.addSubview(collectionView)
         collectionView.backgroundColor = .white
@@ -115,8 +121,42 @@ final class DayViewController: UIViewController {
         }
         self.collectionView.dataSource = self
     }
+    private func currentDateformmater(){
+        let currentDate = Date()
+        let components = calendar.dateComponents([.year, .month, .day], from: currentDate)
+        let targetComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        
+        if components.year == targetComponents.year &&
+           components.month == targetComponents.month &&
+           components.day == targetComponents.day {
+            dateFormatter.dateFormat = "MM월 dd일, 오늘"
+        } else {
+            dateFormatter.dateFormat = "MM월 dd일"
+        }
+        dateLabel.text = dateFormatter.string(from: date)
+    }
+    @objc private func goToNextDay(){
+        let currentDate = Date()
+        
+        guard let nextDay = calendar.date(byAdding: .day, value: 1, to: date) else {
+                return
+        }
+        date = nextDay
+        currentDateformmater()
+        if nextDay <= currentDate {
+            dateLabel.text = dateFormatter.string(from: nextDay)
+            
+        }
+    }
+    @objc private func goToPreviousDay(){
+        if let previousDay = calendar.date(byAdding: .day, value: -1, to: date){
+            date = previousDay
+            currentDateformmater()
+            dateLabel.text = dateFormatter.string(from: previousDay)
+        }
+    }
 }
-
+//MARK: - DayViewController의
 extension DayViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         self.dataSource.count
@@ -137,11 +177,11 @@ extension DayViewController: UICollectionViewDataSource {
             }
             return cell
         case .second(_):
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SecondCell", for: indexPath) as? SecondCell else {
-                return UICollectionViewCell()
-            }
-            return cell
-        }
+                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SecondCell", for: indexPath) as? SecondCell else {
+                        return UICollectionViewCell()
+                    }
+                    return cell
+                }
     }
 }
 
