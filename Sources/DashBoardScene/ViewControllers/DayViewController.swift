@@ -62,8 +62,7 @@ final class DayViewController: UIViewController {
             MySection.SecondItem(value: "두 번째 레이아웃"),
         ])
     ]
-    
-    private var date = Date()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
