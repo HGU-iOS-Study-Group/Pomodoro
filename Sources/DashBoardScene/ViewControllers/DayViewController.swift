@@ -133,7 +133,6 @@ final class DayViewController: UIViewController {
         } else {
             dateFormatter.dateFormat = "MM월 dd일"
         }
-        dateLabel.text = dateFormatter.string(from: date)
     }
     @objc private func goToNextDay(){
         let currentDate = Date()
@@ -141,11 +140,13 @@ final class DayViewController: UIViewController {
         guard let nextDay = calendar.date(byAdding: .day, value: 1, to: date) else {
                 return
         }
-        date = nextDay
-        currentDateformmater()
+        
         if nextDay <= currentDate {
+            date = nextDay
+            currentDateformmater()
             dateLabel.text = dateFormatter.string(from: nextDay)
-            
+        } else{
+            return
         }
     }
     @objc private func goToPreviousDay(){
@@ -156,7 +157,7 @@ final class DayViewController: UIViewController {
         }
     }
 }
-//MARK: - DayViewController의
+//MARK: - DayViewController의 UICollectionViewDataSource
 extension DayViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         self.dataSource.count
