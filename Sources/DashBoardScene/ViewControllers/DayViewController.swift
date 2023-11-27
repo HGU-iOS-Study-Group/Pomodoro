@@ -61,7 +61,6 @@ final class DayViewController: UIViewController {
             updateSelectedDateFormat()
         }
     }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
