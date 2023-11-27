@@ -177,7 +177,7 @@ final class DayViewController: UIViewController {
         self.collectionView.reloadData()
     }
 }
-//MARK: - UICollectionViewDataSource
+//MARK: - DayViewController의 UICollectionViewDataSource
 extension DayViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         self.dataSource.count
