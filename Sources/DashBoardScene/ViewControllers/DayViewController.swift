@@ -170,7 +170,8 @@ final class DayViewController: UIViewController {
         }
     }
 }
-//MARK: - UICollectionViewDataSource
+//MARK: - DayViewController의 UICollectionViewDataSource
+
 extension DayViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         self.dataSource.count
