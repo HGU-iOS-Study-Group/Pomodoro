@@ -59,6 +59,7 @@ final class DayViewController: UIViewController {
         ])
     ]
     
+    private var date = Date()
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
