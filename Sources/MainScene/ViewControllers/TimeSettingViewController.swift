@@ -1,3 +1,4 @@
+//
 //  TimeSettingViewController.swift
 //  Pomodoro
 //
@@ -132,14 +133,9 @@ extension TimeSettingViewController : UIScrollViewDelegate, UICollectionViewDele
         guard let centerIndexPathCalculation = collectionView.indexPathForItem(at: center) else {
             return
         }
-        
-<<<<<<< HEAD
         let hours = Int(centerIndexPathCalculation.item) / 60
         let minutes = Int(centerIndexPathCalculation.item) % 60
         titleTime.text = String(format: "%02d:%02d", hours, minutes)
-=======
-        titleTime.text = "\(Int(centerIndexPathCalculation.item))"
->>>>>>> a82aa8b ([feat]  타이머 설정 페이지 TimeSettingViewController 생성,)
         
         if centerIndexPath != centerIndexPathCalculation {
             centerIndexPath = centerIndexPathCalculation
@@ -147,31 +143,11 @@ extension TimeSettingViewController : UIScrollViewDelegate, UICollectionViewDele
         }
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-<<<<<<< HEAD
         
         if indexPath.item % 5 == 0 {
            return CGSize(width: 75, height: 75)
         } else {
            return CGSize(width: 50, height: 50)
-=======
-
-        let widthProportionForMajorCell: CGFloat = 0.23
-        let widthProportionForMinorCell: CGFloat = 0.12
-        let heightProportionForMajorCell: CGFloat = 0.2
-        let heightProportionForMinorCell: CGFloat = 0.12
-
-        let width = collectionView.bounds.width
-        let cellWidthForMajor = width * widthProportionForMajorCell
-        let cellWidthForMinor = width * widthProportionForMinorCell
-        let cellHeightForMajor = width * heightProportionForMajorCell
-        let cellHeightForMinor = width * heightProportionForMinorCell
-
-        // Return size based on the indexPath item.
-        if indexPath.item % 5 == 0 {
-           return CGSize(width: cellWidthForMajor, height: cellHeightForMajor)
-        } else {
-           return CGSize(width: cellWidthForMinor, height: cellHeightForMinor)
->>>>>>> a82aa8b ([feat]  타이머 설정 페이지 TimeSettingViewController 생성,)
         }
     }
 }
