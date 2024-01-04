@@ -11,6 +11,7 @@ import Then
 import UIKit
 import PanModal
 
+
 final class MainViewController: UIViewController,TimeSettingViewControllerDelegate {
    
     private var timer: Timer?
@@ -19,6 +20,11 @@ final class MainViewController: UIViewController,TimeSettingViewControllerDelega
     private var currentTime = 0
     private var maxTime = 0
 
+    private var notificationId: String?
+
+    private var currentTime = 0
+    
+    private var maxTime = 0
     private let timeLabel = UILabel().then {
         $0.textAlignment = .center
         $0.font = UIFont.systemFont(ofSize: 60, weight: .heavy)
@@ -70,7 +76,6 @@ final class MainViewController: UIViewController,TimeSettingViewControllerDelega
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
             let minutes = (self.maxTime - self.currentTime) / 60
             let seconds = (self.maxTime - self.currentTime) % 60
-            
             self.timeLabel.text = String(format: "%02d:%02d", minutes, seconds)
             self.currentTime += 1
 
