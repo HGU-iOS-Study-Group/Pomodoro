@@ -10,6 +10,9 @@ import Then
 import SnapKit
 
 
+protocol PomodoroTimePickerDelegate {
+    func didSelectTimer(time : Int)
+}
 
 final class TimeSettingViewController: UIViewController {
     
