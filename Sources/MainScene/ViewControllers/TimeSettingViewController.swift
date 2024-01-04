@@ -134,7 +134,6 @@ extension TimeSettingViewController : UIScrollViewDelegate, UICollectionViewDele
         guard let centerIndexPathCalculation = collectionView.indexPathForItem(at: center) else {
             return
         }
-        
         let hours = Int(centerIndexPathCalculation.item) / 60
         let minutes = Int(centerIndexPathCalculation.item) % 60
         titleTime.text = String(format: "%02d:%02d", hours, minutes)
@@ -145,7 +144,6 @@ extension TimeSettingViewController : UIScrollViewDelegate, UICollectionViewDele
         }
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-
         if indexPath.item % 5 == 0 {
            return CGSize(width: 75, height: 75)
         } else {
