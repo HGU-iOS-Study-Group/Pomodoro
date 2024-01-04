@@ -11,6 +11,7 @@ import SnapKit
 
 
 
+
 protocol TimeSettingViewControllerDelegate : AnyObject {
     func didSelectTime(time : Int)
 }
@@ -42,6 +43,7 @@ final class TimeSettingViewController: UIViewController {
     }
     
     private var titleTime = UILabel().then {
+
         $0.font = UIFont.systemFont(ofSize: 40.0, weight: .bold)
         $0.textAlignment = .center
     }
