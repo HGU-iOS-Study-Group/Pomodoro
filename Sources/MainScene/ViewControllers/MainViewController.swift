@@ -10,14 +10,15 @@ import SnapKit
 import Then
 import UIKit
 
-final class MainViewController: UIViewController {
-
+final class MainViewController: UIViewController,PomodoroTimePickerDelegate {
+   
     private var timer: Timer?
     private var stopLongPress: UILongPressGestureRecognizer!
 
     private var notificationId: String?
 
     private var currentTime = 0
+    
     private var maxTime = 0
 
     private let timeLabel = UILabel().then {
@@ -31,35 +32,21 @@ final class MainViewController: UIViewController {
         $0.font = UIFont.systemFont(ofSize: 15)
     }
 
-    private let timeButton = UIButton(type: .roundedRect).then {
-        $0.setTitle("시간 설정", for: .normal)
-        $0.addTarget(self, action: #selector(timeSetting), for: .touchUpInside)
-    }
-
-    private let countButton = UIButton(type: .roundedRect).then {
+    private lazy var countButton = UIButton(type: .roundedRect).then {
         $0.setTitle("카운트 시작", for: .normal)
         $0.addTarget(self, action: #selector(startTimer), for: .touchUpInside)
     }
-
+    
+    private lazy var timeButton = UIButton(type: .roundedRect).then {
+        $0.setTitle("시간 설정", for: .normal)
+        $0.addTarget(self, action: #selector(timeSetting), for: .touchUpInside)
+    }
+    
     @objc private func timeSetting() {
-        let alertController = UIAlertController(title: "시간 설정", message: nil, preferredStyle: .alert)
-
-        alertController.addTextField { textField in
-            textField.placeholder = "시간을 입력하세요"
-            textField.keyboardType = .numberPad
-        }
-        let confirm = UIAlertAction(title: "확인", style: .default) { _ in
-            if let text = alertController.textFields?.first?.text, let time = Int(text) {
-                self.maxTime = time
-                self.currentTime = 0
-
-                let minutes = (self.maxTime - self.currentTime) / 60
-                let seconds = (self.maxTime - self.currentTime) % 60
-                self.timeLabel.text = String(format: "%02d:%02d", minutes, seconds)
-            } else {}
-        }
-        alertController.addAction(confirm)
-        present(alertController, animated: true)
+        
+        let timeSettingviewController = TimeSettingViewController(isSelectedTime: false, delegate: self)
+        self.navigationController?.pushViewController(timeSettingviewController, animated: true)
+        
     }
 
     @objc private func stopTimer() {
@@ -75,7 +62,11 @@ final class MainViewController: UIViewController {
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
         }
     }
-
+    
+    func didSelectTimer(time: Int) {
+        maxTime = time
+    }
+    
     @objc private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
             let minutes = (self.maxTime - self.currentTime) / 60
