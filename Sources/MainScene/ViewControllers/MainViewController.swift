@@ -11,10 +11,16 @@ import Then
 import UIKit
 import PanModal
 
-final class MainViewController: UIViewController {
+final class MainViewController: UIViewController,PomodoroTimePickerDelegate {
+   
     private var timer: Timer?
-    private var currentTimeInSeconds = 0
-    private var maxTimeInSeconds = 10 // FIXME: 설정된 값으로 초기화 필요
+    private var stopLongPress: UILongPressGestureRecognizer!
+
+    private var notificationId: String?
+
+    private var currentTime = 0
+    
+    private var maxTime = 0
 
     private let timeLabel = UILabel().then {
         $0.textAlignment = .center
@@ -28,15 +34,68 @@ final class MainViewController: UIViewController {
         $0.font = UIFont.systemFont(ofSize: 16)
         $0.isHidden = true
     }
+    private lazy var countButton = UIButton(type: .roundedRect).then {
+        $0.setTitle("카운트 시작", for: .normal)
+        $0.addTarget(self, action: #selector(startTimer), for: .touchUpInside)
+    }
+    
+    private lazy var timeButton = UIButton(type: .roundedRect).then {
+        $0.setTitle("시간 설정", for: .normal)
+        $0.addTarget(self, action: #selector(timeSetting), for: .touchUpInside)
+    }
+    
+    @objc private func timeSetting() {
+        
+        let timeSettingviewController = TimeSettingViewController(isSelectedTime: false, delegate: self)
+        self.navigationController?.pushViewController(timeSettingviewController, animated: true)
+        
+    }
 
-    private let tagButton = UIButton().then {
-        $0.setTitle("Tag", for: .normal)
-        $0.setTitleColor(.black, for: .normal)
-        $0.titleLabel?.font = UIFont.systemFont(ofSize: 15)
-        $0.addTarget(
-            self,
-            action: #selector(openTagModal),
-            for: .touchUpInside
+    @objc private func stopTimer() {
+        timer?.invalidate()
+        currentTime = 0
+        maxTime = 0
+
+        let minutes = (maxTime - currentTime) / 60
+        let seconds = (maxTime - currentTime) % 60
+        timeLabel.text = String(format: "%02d:%02d", minutes, seconds)
+
+        if let id = notificationId {
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
+        }
+    }
+    
+    func didSelectTimer(time: Int) {
+        maxTime = time
+    }
+    
+    @objc private func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+            let minutes = (self.maxTime - self.currentTime) / 60
+            let seconds = (self.maxTime - self.currentTime) % 60
+            self.timeLabel.text = String(format: "%02d:%02d", minutes, seconds)
+            self.currentTime += 1
+
+            if self.currentTime > self.maxTime {
+                timer.invalidate()
+            }
+
+        }
+        timer?.fire()
+
+        notificationId = UUID().uuidString
+
+        let content = UNMutableNotificationContent()
+        content.title = "시간 종료!"
+        content.body = "시간이 종료되었습니다. 휴식을 취해주세요."
+
+        let request = UNNotificationRequest(
+            identifier: notificationId!,
+            content: content,
+            trigger: UNTimeIntervalNotificationTrigger(
+                timeInterval: TimeInterval(maxTime),
+                repeats: false
+            )
         )
     }
 
