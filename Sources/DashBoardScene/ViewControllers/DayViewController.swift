@@ -14,6 +14,7 @@ protocol DayViewControllerDelegate {
 }
 
 final class DayViewController: UIViewController {
+
     private var delegate : DayViewControllerDelegate?
     private let dashboardStatusCell = DashboardStatusCell()
     private let dashboardPieChartCell = DashboardPieChartCell()
