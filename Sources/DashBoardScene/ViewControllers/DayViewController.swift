@@ -11,21 +11,28 @@ import SnapKit
 
 final class DayViewController: UIViewController {
     
-    private var date = Date()
+    private var selectedDate = Date() {
+        didSet{
+            updateSelectedDateFormat()
+        }
+    }
     private let calendar = Calendar.current
     private let dateFormatter = DateFormatter().then {
         $0.dateStyle = .long
         $0.dateFormat = "MM월-dd일 오늘"
     }
+    
     private lazy var dateLabel = UILabel().then {
-        $0.text = dateFormatter.string(from: date)
+        $0.text = dateFormatter.string(from: selectedDate)
         $0.textAlignment = .center
         $0.textColor = .black
     }
+    
     private lazy var previousButton = UIButton().then {
         $0.setImage(UIImage(systemName: "arrowtriangle.backward")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
         $0.addTarget(self, action: #selector(goToPreviousDay), for: .touchUpInside)
     }
+    
     private lazy var nextButton = UIButton().then {
         $0.setImage(UIImage(systemName: "arrowtriangle.right")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
         $0.addTarget(self, action: #selector(goToNextDay), for: .touchUpInside)
@@ -40,6 +47,7 @@ final class DayViewController: UIViewController {
         $0.register(FirstCell.self, forCellWithReuseIdentifier: "FirstCell")
         $0.register(SecondCell.self, forCellWithReuseIdentifier: "SecondCell")
     }
+    
     private let dataSource: [MySection] = [
         .first([
             MySection.FirstItem(value: "첫 레이아웃"),
@@ -48,6 +56,7 @@ final class DayViewController: UIViewController {
             MySection.SecondItem(value: "두 번째 레이아웃"),
         ])
     ]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -121,43 +130,44 @@ final class DayViewController: UIViewController {
         }
         self.collectionView.dataSource = self
     }
-    private func currentDateformmater(){
+    
+    private func updateSelectedDateFormat() {
         let currentDate = Date()
         let components = calendar.dateComponents([.year, .month, .day], from: currentDate)
-        let targetComponents = calendar.dateComponents([.year, .month, .day], from: date)
-        
+        let targetComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
+
         if components.year == targetComponents.year &&
-           components.month == targetComponents.month &&
-           components.day == targetComponents.day {
+            components.month == targetComponents.month &&
+            components.day == targetComponents.day {
             dateFormatter.dateFormat = "MM월 dd일, 오늘"
         } else {
             dateFormatter.dateFormat = "MM월 dd일"
         }
+        dateLabel.text = dateFormatter.string(from: selectedDate)
     }
-    @objc private func goToNextDay(){
+    
+    @objc private func goToNextDay() {
         let currentDate = Date()
-        
-        guard let nextDay = calendar.date(byAdding: .day, value: 1, to: date) else {
+        guard let nextDay = calendar.date(byAdding: .day, value: 1, to: selectedDate) else {
                 return
         }
         
         if nextDay <= currentDate {
-            date = nextDay
-            currentDateformmater()
-            dateLabel.text = dateFormatter.string(from: nextDay)
+            selectedDate = nextDay
+            updateSelectedDateFormat()
         } else{
             return
         }
     }
-    @objc private func goToPreviousDay(){
-        if let previousDay = calendar.date(byAdding: .day, value: -1, to: date){
-            date = previousDay
-            currentDateformmater()
-            dateLabel.text = dateFormatter.string(from: previousDay)
+    
+    @objc private func goToPreviousDay() {
+        if let previousDay = calendar.date(byAdding: .day, value: -1, to: selectedDate) {
+            selectedDate = previousDay
+            updateSelectedDateFormat()
         }
     }
 }
-//MARK: - DayViewController의 UICollectionViewDataSource
+//MARK: - UICollectionViewDataSource
 extension DayViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         self.dataSource.count
