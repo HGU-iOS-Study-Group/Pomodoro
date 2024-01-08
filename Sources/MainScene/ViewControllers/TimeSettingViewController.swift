@@ -43,7 +43,8 @@ final class TimeSettingViewController: UIViewController {
     }
     
     private var titleTime = UILabel().then {
-        $0.text = "시간"
+        $0.font = UIFont.systemFont(ofSize: 40.0, weight: .bold)
+        $0.textAlignment = .center
     }
     
     private lazy var collectionFlowlayout = UICollectionViewFlowLayout().then {
@@ -84,7 +85,7 @@ final class TimeSettingViewController: UIViewController {
         }
     
         titleTime.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(50)
+            make.top.equalToSuperview().offset(view.bounds.height * 0.2)
             make.centerX.equalToSuperview()
         }
         
@@ -138,7 +139,9 @@ extension TimeSettingViewController : UIScrollViewDelegate, UICollectionViewDele
             return
         }
         
-        titleTime.text = "\(Int(centerIndexPathCalculation.item))"
+        let hours = Int(centerIndexPathCalculation.item) / 60
+        let minutes = Int(centerIndexPathCalculation.item) % 60
+        titleTime.text = String(format: "%02d:%02d", hours, minutes)
         
         if centerIndexPath != centerIndexPathCalculation {
             centerIndexPath = centerIndexPathCalculation
