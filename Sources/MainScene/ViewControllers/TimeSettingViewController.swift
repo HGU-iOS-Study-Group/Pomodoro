@@ -64,6 +64,7 @@ final class TimeSettingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.isNavigationBarHidden = true
         view.backgroundColor = .white
         collectionView.dataSource = self
         collectionView.delegate = self
