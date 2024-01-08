@@ -61,6 +61,7 @@ final class DayViewController: UIViewController {
             updateSelectedDateFormat()
         }
     }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -170,7 +171,7 @@ final class DayViewController: UIViewController {
         }
     }
 }
-//MARK: - DayViewController의 UICollectionViewDataSource
+//MARK: - UICollectionViewDataSource
 extension DayViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         self.dataSource.count
