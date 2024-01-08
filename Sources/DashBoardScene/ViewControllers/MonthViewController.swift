@@ -12,15 +12,15 @@ import SnapKit
 
 final class MonthViewController: UIViewController {
     
-    var dayData: [String] = [" "]
-    var priceData: [Double] = [10]
+    var dayData: [String] = []
+    var totalData: [Double] = [10]
     
     private let pieBackgroundView  = UIView().then { view in
         view.layer.cornerRadius = 20
         view.backgroundColor = .systemGray3
     }
     
-    private let donutPieChartView = PieChartView().then{ chart in
+    private let donutPieChartView = PieChartView().then { chart in
         chart.noDataText = "출력 데이터가 없습니다."
         chart.centerText = "총합"
         chart.noDataFont = .systemFont(ofSize: 20)
@@ -38,16 +38,19 @@ final class MonthViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupPieView()
-        ChangePieCenterText()
+        changePieCenterTextFont()
+        let pieChartDataEntries = totalData.enumerated().map { (index, value) in
+            return ChartDataEntry(x: Double(index), y: value)
+        }
         setPieData(pieChartView: donutPieChartView , pieChartDataEntries:
-                            entryData(values: priceData))
+                    pieChartDataEntries)
         
     }
     
-    private func ChangePieCenterText() {
+    private func changePieCenterTextFont() {
         
         let attributeString = NSAttributedString(string: "총합", attributes: [ NSAttributedString.Key.font: UIFont.systemFont(ofSize: 25, weight: .bold)
-            ])
+                                                                           ])
         
         donutPieChartView.centerAttributedText = attributeString
     }
@@ -64,13 +67,11 @@ final class MonthViewController: UIViewController {
             make.width.height.equalTo(view.bounds.width * 0.65)
         }
     }
-
+    
     func entryData(values: [Double]) -> [ChartDataEntry] {
-
-        var pieDataEntries: [ChartDataEntry] = []
-        for i in 0 ..< values.count {
-            let pieDataEntry = ChartDataEntry(x: Double(i), y: values[i])
-            pieDataEntries.append(pieDataEntry)
+        
+        let pieDataEntries = values.enumerated().map { (index, value) in
+            return ChartDataEntry(x: Double(index), y: value)
         }
         return pieDataEntries
     }
@@ -83,5 +84,4 @@ final class MonthViewController: UIViewController {
         let pieChartData = PieChartData(dataSet: pieChartdataSet)
         pieChartView.data = pieChartData
     }
-    
 }
