@@ -42,7 +42,6 @@ final class MainViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
         addSubviews()
         setupConstraints()
 
