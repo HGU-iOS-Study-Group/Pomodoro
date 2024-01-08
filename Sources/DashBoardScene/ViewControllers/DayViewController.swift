@@ -17,7 +17,11 @@ final class DayViewController: UIViewController {
     private var delegate : DayViewControllerDelegate?
     private let dashboardStatusCell = DashboardStatusCell()
     private let dashboardPieChartCell = DashboardPieChartCell()
-    private var selectedDate = Date()
+    private var selectedDate = Date() {
+        didSet{
+            updateSelectedDateFormat()
+        }
+    }
     private let calendar = Calendar.current
     private let dateFormatter = DateFormatter().then {
         $0.dateStyle = .long
@@ -138,7 +142,6 @@ final class DayViewController: UIViewController {
         let currentDate = Date()
         let components = calendar.dateComponents([.year, .month, .day], from: currentDate)
         let targetComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
-        
         if components.year == targetComponents.year &&
             components.month == targetComponents.month &&
             components.day == targetComponents.day {
@@ -177,7 +180,7 @@ final class DayViewController: UIViewController {
         self.collectionView.reloadData()
     }
 }
-//MARK: - DayViewController의 UICollectionViewDataSource
+//MARK: - UICollectionViewDataSource
 extension DayViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         self.dataSource.count
