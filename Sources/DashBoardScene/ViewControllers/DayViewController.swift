@@ -27,15 +27,18 @@ final class DayViewController: UIViewController {
         $0.dateStyle = .long
         $0.dateFormat = "MM월-dd일 오늘"
     }
+    
     private lazy var dateLabel = UILabel().then {
         $0.text = dateFormatter.string(from: selectedDate)
         $0.textAlignment = .center
         $0.textColor = .black
     }
+    
     private lazy var previousButton = UIButton().then {
         $0.setImage(UIImage(systemName: "arrowtriangle.backward")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
         $0.addTarget(self, action: #selector(goToPreviousDay), for: .touchUpInside)
     }
+    
     private lazy var nextButton = UIButton().then {
         $0.setImage(UIImage(systemName: "arrowtriangle.right")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
         $0.addTarget(self, action: #selector(goToNextDay), for: .touchUpInside)
@@ -50,6 +53,7 @@ final class DayViewController: UIViewController {
         $0.register(DashboardStatusCell.self, forCellWithReuseIdentifier: "DashboardStatusCell")
         $0.register(DashboardPieChartCell.self, forCellWithReuseIdentifier: "DashboardPieChartCell")
     }
+    
     private let dataSource: [MySection] = [
         .first([
             MySection.FirstItem(value: "첫 레이아웃"),
@@ -138,6 +142,7 @@ final class DayViewController: UIViewController {
         let currentDate = Date()
         let components = calendar.dateComponents([.year, .month, .day], from: currentDate)
         let targetComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
+
         if components.year == targetComponents.year &&
             components.month == targetComponents.month &&
             components.day == targetComponents.day {
@@ -152,11 +157,13 @@ final class DayViewController: UIViewController {
         let currentDate = Date()
         guard let nextDay = calendar.date(byAdding: .day, value: 1, to: selectedDate) else {
             return
+
         }
         if nextDay <= currentDate {
             selectedDate = nextDay
             updateSelectedDateFormat()
             delegate?.dateArrowButtonDidTap(data: selectedDate)
+
         } else{
             return
         }
@@ -170,6 +177,7 @@ final class DayViewController: UIViewController {
             selectedDate = previousDay
             updateSelectedDateFormat()
             delegate?.dateArrowButtonDidTap(data: selectedDate)
+
         }
         dashboardStatusCell.dateArrowButtonDidTap(data: selectedDate)
         dashboardPieChartCell.dateArrowButtonDidTap(data: selectedDate)
