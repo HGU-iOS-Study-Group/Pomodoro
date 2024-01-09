@@ -17,6 +17,7 @@ class TagCollectionViewCell: UICollectionViewCell {
         $0.textColor = .gray
     }
     
+    var dataLabel = UILabel()
     
     static var id: String {
         if let className = NSStringFromClass(Self.self).components(separatedBy: ".").last {
@@ -26,7 +27,11 @@ class TagCollectionViewCell: UICollectionViewCell {
         }
     }
     
+<<<<<<< Updated upstream
     var dataLabel = UILabel()
+=======
+    
+>>>>>>> Stashed changes
     
     override init(frame: CGRect) {
         super.init(frame: frame)
