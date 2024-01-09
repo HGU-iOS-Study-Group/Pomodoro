@@ -27,12 +27,6 @@ class TagCollectionViewCell: UICollectionViewCell {
         }
     }
     
-<<<<<<< Updated upstream
-    var dataLabel = UILabel()
-=======
-    
->>>>>>> Stashed changes
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
