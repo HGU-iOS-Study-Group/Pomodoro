@@ -10,7 +10,7 @@ import SnapKit
 import Then
 import UIKit
 
-final class MainViewController: UIViewController,PomodoroTimePickerDelegate {
+final class MainViewController: UIViewController,TimeSettingViewControllerDelegate {
    
     private var timer: Timer?
     private var stopLongPress: UILongPressGestureRecognizer!

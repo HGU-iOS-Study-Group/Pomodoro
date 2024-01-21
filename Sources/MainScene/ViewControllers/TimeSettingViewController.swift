@@ -1,4 +1,3 @@
-//
 //  TimeSettingViewController.swift
 //  Pomodoro
 //
@@ -171,3 +170,4 @@ extension TimeSettingViewController : UIScrollViewDelegate, UICollectionViewDele
         }
     }
 }
+

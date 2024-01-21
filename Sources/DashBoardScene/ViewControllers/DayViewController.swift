@@ -9,7 +9,54 @@
 import UIKit
 import SnapKit
 
+protocol DayViewControllerDelegate {
+    func sendSelectedDate(data: Date)
+}
+
 final class DayViewController: UIViewController {
+    private var delegate : DayViewControllerDelegate?
+    private let firstCell = FirstCell()
+    private var selectedDate = Date()
+    private let calendar = Calendar.current
+    private let dateFormatter = DateFormatter().then {
+        $0.dateStyle = .long
+        $0.dateFormat = "MM월-dd일 오늘"
+    }
+    
+    private lazy var dateLabel = UILabel().then {
+        $0.text = dateFormatter.string(from: selectedDate)
+        $0.textAlignment = .center
+        $0.textColor = .black
+    }
+    
+    private lazy var previousButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "arrowtriangle.backward")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        $0.addTarget(self, action: #selector(goToPreviousDay), for: .touchUpInside)
+    }
+    
+    private lazy var nextButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "arrowtriangle.right")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        $0.addTarget(self, action: #selector(goToNextDay), for: .touchUpInside)
+    }
+    
+    private lazy var collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.getLayout()).then {
+        $0.isScrollEnabled = true
+        $0.showsHorizontalScrollIndicator = false
+        $0.showsVerticalScrollIndicator = true
+        $0.contentInset = .zero
+        $0.clipsToBounds = true
+        $0.register(FirstCell.self, forCellWithReuseIdentifier: "FirstCell")
+        $0.register(SecondCell.self, forCellWithReuseIdentifier: "SecondCell")
+    }
+    
+    private let dataSource: [MySection] = [
+        .first([
+            MySection.FirstItem(value: "첫 레이아웃"),
+        ]),
+        .second([
+            MySection.SecondItem(value: "두 번째 레이아웃"),
+        ])
+    ]
     
     private var selectedDate = Date() {
         didSet{
@@ -135,7 +182,6 @@ final class DayViewController: UIViewController {
         let currentDate = Date()
         let components = calendar.dateComponents([.year, .month, .day], from: currentDate)
         let targetComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
-
         if components.year == targetComponents.year &&
             components.month == targetComponents.month &&
             components.day == targetComponents.day {
@@ -149,22 +195,27 @@ final class DayViewController: UIViewController {
     @objc private func goToNextDay() {
         let currentDate = Date()
         guard let nextDay = calendar.date(byAdding: .day, value: 1, to: selectedDate) else {
-                return
+            return
         }
-        
         if nextDay <= currentDate {
             selectedDate = nextDay
             updateSelectedDateFormat()
+            delegate?.sendSelectedDate(data: selectedDate)
         } else{
             return
         }
+        firstCell.sendSelectedDate(data: selectedDate)
+        self.collectionView.reloadData()
     }
     
     @objc private func goToPreviousDay() {
         if let previousDay = calendar.date(byAdding: .day, value: -1, to: selectedDate) {
             selectedDate = previousDay
             updateSelectedDateFormat()
+            delegate?.sendSelectedDate(data: selectedDate)
         }
+        firstCell.sendSelectedDate(data: selectedDate)
+        self.collectionView.reloadData()
     }
 }
 //MARK: - UICollectionViewDataSource
@@ -186,6 +237,8 @@ extension DayViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FirstCell", for: indexPath) as? FirstCell else {
                 return UICollectionViewCell()
             }
+            cell.updateUI(for: selectedDate)
+            
             return cell
         case .second(_):
                     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SecondCell", for: indexPath) as? SecondCell else {
