@@ -60,7 +60,7 @@ final class MainViewController: UIViewController,TimeSettingViewControllerDelega
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
         }
     }
-    
+
     func didSelectTime(time: Int) {
         maxTime = time * 60
     }
