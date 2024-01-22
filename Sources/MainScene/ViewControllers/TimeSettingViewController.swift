@@ -7,26 +7,24 @@
 
 import UIKit
 import Then
-import SnapKit
+import SnapKit  
 
-protocol PomodoroTimePickerDelegate {
-    func didSelectTimer(time : Int)
+
+protocol TimeSettingViewControllerDelegate : AnyObject {
+    func didSelectTime(time : Int)
 }
 
 final class TimeSettingViewController: UIViewController {
     
-    
     private var isSelectedTime : Bool = false
-    private let colletionViewIdentifier = "Cell"
-    private var heightProportionForMajorCell : CGFloat?
+    private let colletionViewIdentifier = "TimerCollectionViewCell"
     private var centerIndexPath : IndexPath?
-    public var selectedTime : Int = 0
+    var selectedTime : Int = 0
     
-    var delegate : PomodoroTimePickerDelegate
+    private var delegate : TimeSettingViewControllerDelegate
     
-    init(isSelectedTime: Bool, heightProportionForMajorCell: CGFloat? = nil, centerIndexPath: IndexPath? = nil, delegate: PomodoroTimePickerDelegate) {
+    init(isSelectedTime: Bool, heightProportionForMajorCell: CGFloat? = nil, centerIndexPath: IndexPath? = nil, delegate: TimeSettingViewControllerDelegate) {
         self.isSelectedTime = isSelectedTime
-        self.heightProportionForMajorCell = heightProportionForMajorCell
         self.centerIndexPath = centerIndexPath
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
@@ -47,10 +45,8 @@ final class TimeSettingViewController: UIViewController {
         $0.textAlignment = .center
     }
     
-    private lazy var collectionFlowlayout = UICollectionViewFlowLayout().then {
+    private let collectionFlowlayout = UICollectionViewFlowLayout().then {
         $0.scrollDirection = .horizontal
-        $0.minimumLineSpacing = 0
-        $0.minimumInteritemSpacing = 0
     }
     
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionFlowlayout).then {
@@ -58,6 +54,7 @@ final class TimeSettingViewController: UIViewController {
         $0.showsHorizontalScrollIndicator = true
         $0.register(TimerCollectionViewCell.self, forCellWithReuseIdentifier: colletionViewIdentifier)
         $0.showsHorizontalScrollIndicator = false
+        
         let padding = view.bounds.width / 2 - collectionFlowlayout.itemSize.width / 2
         $0.contentInset = UIEdgeInsets(top: 0, left: padding, bottom: 0, right: padding)
     }
@@ -68,21 +65,19 @@ final class TimeSettingViewController: UIViewController {
         view.backgroundColor = .white
         collectionView.dataSource = self
         collectionView.delegate = self
-        setUplayout()
+        setUpLayout()
     }
     
-    private func setUplayout() {
+    private func setUpLayout() {
         view.addSubview(collectionView)
         view.addSubview(titleTime)
         view.addSubview(timeSettingbutton)
         
-        heightProportionForMajorCell = 0.2
-        let maximumCellHeight = view.bounds.width * (heightProportionForMajorCell ?? 0.2)
         collectionView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-(view.bounds.height * 0.3))
-            make.leading.equalTo(view.bounds.width * 0.15)
+            make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
-            make.height.equalTo(maximumCellHeight)
+            make.height.equalTo(100)
         }
     
         titleTime.snp.makeConstraints { make in
@@ -99,7 +94,7 @@ final class TimeSettingViewController: UIViewController {
     }
     
     @objc private func onClick() {
-        self.delegate.didSelectTimer(time: Int(centerIndexPath?.item ?? 0))
+        self.delegate.didSelectTime(time: Int(centerIndexPath?.item ?? 0))
         navigationController?.popViewController(animated: true)
     }
 }
@@ -151,22 +146,10 @@ extension TimeSettingViewController : UIScrollViewDelegate, UICollectionViewDele
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 
-        let widthProportionForMajorCell: CGFloat = 0.23
-        let widthProportionForMinorCell: CGFloat = 0.12
-        let heightProportionForMajorCell: CGFloat = 0.2
-        let heightProportionForMinorCell: CGFloat = 0.12
-
-        let width = collectionView.bounds.width
-        let cellWidthForMajor = width * widthProportionForMajorCell
-        let cellWidthForMinor = width * widthProportionForMinorCell
-        let cellHeightForMajor = width * heightProportionForMajorCell
-        let cellHeightForMinor = width * heightProportionForMinorCell
-
-        // Return size based on the indexPath item.
         if indexPath.item % 5 == 0 {
-           return CGSize(width: cellWidthForMajor, height: cellHeightForMajor)
+           return CGSize(width: 75, height: 75)
         } else {
-           return CGSize(width: cellWidthForMinor, height: cellHeightForMinor)
+           return CGSize(width: 50, height: 50)
         }
     }
 }
