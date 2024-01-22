@@ -14,9 +14,7 @@ final class MainViewController: UIViewController,TimeSettingViewControllerDelega
    
     private var timer: Timer?
     private var stopLongPress: UILongPressGestureRecognizer!
-
     private var notificationId: String?
-
     private var currentTime = 0
     
     private var maxTime = 0
@@ -62,22 +60,22 @@ final class MainViewController: UIViewController,TimeSettingViewControllerDelega
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
         }
     }
-    
-    func didSelectTimer(time: Int) {
-        maxTime = time
+
+    func didSelectTime(time: Int) {
+        maxTime = time * 60
     }
     
     @objc private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
             let minutes = (self.maxTime - self.currentTime) / 60
             let seconds = (self.maxTime - self.currentTime) % 60
+            
             self.timeLabel.text = String(format: "%02d:%02d", minutes, seconds)
             self.currentTime += 1
 
             if self.currentTime > self.maxTime {
                 timer.invalidate()
             }
-
         }
         timer?.fire()
 
