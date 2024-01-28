@@ -5,5 +5,45 @@
 //  Created by 진세진 on 2024/01/22.
 //  Copyright © 2024 io.hgu. All rights reserved.
 //
+import UIKit
 
-import Foundation
+// FIXME: - 임시로 사용하는 PomodoroData입니다.
+struct PomodoroData {
+    var breakTime: Int
+    var focusTime: Int
+    var tagId: String
+    var participateDate: Date
+    var success: Bool
+
+    static var dummyData: [PomodoroData] {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let defaultDate = Date()
+        
+        return [
+            PomodoroData(breakTime: 5, focusTime: 25, tagId: "공부", participateDate: dateFormatter.date(from: "2024-01-01") ?? defaultDate, success: true),
+            PomodoroData(breakTime: 5, focusTime: 30, tagId: "운동", participateDate: dateFormatter.date(from: "2024-01-04") ?? defaultDate, success: false),
+            PomodoroData(breakTime: 5, focusTime: 25, tagId: "운동", participateDate: dateFormatter.date(from: "2024-01-04") ?? defaultDate, success: true),
+            PomodoroData(breakTime: 5, focusTime: 25, tagId: "운동", participateDate: dateFormatter.date(from: "2024-01-08") ?? defaultDate, success: false),
+            PomodoroData(breakTime: 5, focusTime: 25, tagId: "운동", participateDate: dateFormatter.date(from: "2024-01-12") ?? defaultDate, success: false),
+            PomodoroData(breakTime: 5, focusTime: 25, tagId: "공부", participateDate: dateFormatter.date(from: "2024-01-09") ?? defaultDate, success: true),
+            PomodoroData(breakTime: 5, focusTime: 25, tagId: "공부", participateDate: dateFormatter.date(from: "2024-01-02") ?? defaultDate, success: true),
+            PomodoroData(breakTime: 5, focusTime: 25, tagId: "스터디", participateDate: dateFormatter.date(from: "2024-01-02") ?? defaultDate, success: true),
+            PomodoroData(breakTime: 5, focusTime: 20, tagId: "스터디", participateDate: dateFormatter.date(from: "2024-01-17") ?? defaultDate, success: true),
+        ]
+    }
+}
+
+struct TotalPomodoro {
+    var totalSessions: Int
+    var totalSuccesses: Int
+    var totalFailures: Int
+    var totalDate: Int
+    
+    init(sessions: [PomodoroData]) {
+        self.totalSessions = sessions.count
+        self.totalSuccesses = sessions.filter { $0.success }.count
+        self.totalFailures = sessions.filter { !$0.success }.count
+        self.totalDate = 1
+    }
+}
