@@ -16,6 +16,9 @@ protocol DayViewControllerDelegate {
 final class DayViewController: UIViewController {
     private var delegate : DayViewControllerDelegate?
     private let firstCell = FirstCell()
+    private let secondCell = SecondCell()
+    private var selectedDate = Date()
+
     private let calendar = Calendar.current
     private let dateFormatter = DateFormatter().then {
         $0.dateStyle = .long
@@ -162,6 +165,9 @@ final class DayViewController: UIViewController {
         } else{
             return
         }
+        firstCell.sendSelectedDate(data: selectedDate)
+        secondCell.sendSelectedDate(data: selectedDate)
+        self.collectionView.reloadData()
     }
     
     @objc private func goToPreviousDay() {
@@ -169,6 +175,10 @@ final class DayViewController: UIViewController {
             selectedDate = previousDay
             updateSelectedDateFormat()
         }
+
+        firstCell.sendSelectedDate(data: selectedDate)
+        secondCell.sendSelectedDate(data: selectedDate)
+        self.collectionView.reloadData()
     }
 }
 //MARK: - UICollectionViewDataSource
@@ -194,11 +204,12 @@ extension DayViewController: UICollectionViewDataSource {
             
             return cell
         case .second(_):
-                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SecondCell", for: indexPath) as? SecondCell else {
-                        return UICollectionViewCell()
-                    }
-                    return cell
-                }
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SecondCell", for: indexPath) as? SecondCell else {
+                return UICollectionViewCell()
+            }
+            cell.updatePieChartData(for: selectedDate)
+            return cell
+        }
     }
 }
 
