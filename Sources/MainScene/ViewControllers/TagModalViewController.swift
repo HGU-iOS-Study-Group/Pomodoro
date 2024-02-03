@@ -133,4 +133,15 @@ extension TagModalViewController: UICollectionViewDelegate, UICollectionViewData
         cell.tagLabel.text = dataSource[indexPath.item]
         return cell
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item == 0 {
+            let tagAddVC = TagConfigurationViewController()
+            if let navigationController = navigationController {
+                navigationController.pushViewController(tagAddVC, animated: true)
+            } else {
+                present(tagAddVC, animated: true, completion: nil)
+            }
+        }
+    }
 }
