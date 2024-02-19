@@ -27,7 +27,7 @@ final class TagModalViewController: UIViewController, UICollectionViewDelegate {
         $0.font = UIFont.boldSystemFont(ofSize: 26)
     }
     
-    private let circleButton = UIButton().then {
+    private let ellipseButton = UIButton().then {
         $0.setImage(UIImage(systemName: "line.horizontal.3"), for: .normal)
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .black
@@ -44,7 +44,7 @@ final class TagModalViewController: UIViewController, UICollectionViewDelegate {
     
     // MARK: - TODO
     
-    @objc private func circleButtonTapped() {}
+    @objc private func ellipseButtonTapped() {}
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,7 +60,7 @@ final class TagModalViewController: UIViewController, UICollectionViewDelegate {
     
     private func configureLayout() {
         horizontalStackView.addArrangedSubview(label)
-        horizontalStackView.addArrangedSubview(circleButton)
+        horizontalStackView.addArrangedSubview(ellipseButton)
         
         mainStackView.addArrangedSubview(horizontalStackView)
         if let tagCollectionView {
