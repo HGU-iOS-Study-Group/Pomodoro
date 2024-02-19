@@ -80,10 +80,8 @@ final class TagModalViewController: UIViewController, UICollectionViewDelegate {
         collectionViewLayer.minimumLineSpacing = 5
         collectionViewLayer.minimumInteritemSpacing = 1
         
-        let tagCollectionView = TagCollectionView(frame: .zero, 
-                                                  collectionViewLayout: collectionViewLayer)
+        let tagCollectionView = TagCollectionView(frame: .zero, collectionViewLayout: collectionViewLayer)
         tagCollectionView.backgroundColor = .secondarySystemBackground
-        
         view.addSubview(tagCollectionView)
         
         tagCollectionView.snp.makeConstraints { make in
