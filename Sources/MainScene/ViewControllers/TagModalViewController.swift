@@ -23,6 +23,7 @@ final class TagModalViewController: UIViewController, UICollectionViewDelegate {
     private let label = UILabel().then {
         $0.text = "태그선택"
         $0.textColor = .white
+        // $0.font = UIFont.systemFont(ofSize: 28)
         $0.font = UIFont.boldSystemFont(ofSize: 26)
     }
 
@@ -104,7 +105,7 @@ final class TagModalViewController: UIViewController, UICollectionViewDelegate {
 }
 
 protocol TagCreationDelegate: AnyObject {
-    func createTag(tag: String)
+    func didCreateTag(tag: String)
 }
 
 extension TagModalViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, TagCreationDelegate {
@@ -144,17 +145,16 @@ extension TagModalViewController: UICollectionViewDataSource, UICollectionViewDe
         return cell
     }
 
-    // FIXME: 셀 추가 안되는 부분 수정
     func collectionView(
         _: UICollectionView,
         didSelectItemAt _: IndexPath
     ) {
         let tagConfigView = TagConfigurationViewController()
-        tagConfigView.delegate = self
+        tagConfigView.delegate = self // 이 부분이 중요
         present(tagConfigView, animated: true, completion: nil)
     }
 
-    func createTag(tag: String) {
+    func didCreateTag(tag: String) {
         TagCollectionViewData.data.append(tag)
         print("태그 추가")
         print("Updated data: \(TagCollectionViewData.data)")
