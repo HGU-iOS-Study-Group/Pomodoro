@@ -49,7 +49,7 @@ class TagConfigurationViewController: UIViewController, UITextFieldDelegate {
             present(alert, animated: true)
             return
         }
-        delegate?.didCreateTag(tag: tagText)
+        delegate?.createTag(tag: tagText)
         dismiss(animated: true, completion: nil)
     }
 

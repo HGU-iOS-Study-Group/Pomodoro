@@ -9,7 +9,11 @@ import SnapKit
 import Then
 import UIKit
 
-final class TagModalViewController: UIViewController, UICollectionViewDelegate {
+protocol TagCreationDelegate: AnyObject {
+    func createTag(tag: String)
+}
+
+final class TagModalViewController: UIViewController {
     private var tagCollectionView: TagCollectionView?
     private let dataSource = TagCollectionViewData.data
 
@@ -27,7 +31,7 @@ final class TagModalViewController: UIViewController, UICollectionViewDelegate {
         $0.font = UIFont.boldSystemFont(ofSize: 26)
     }
 
-    private let circleButton = UIButton().then {
+    private let ellipseButton = UIButton().then {
         $0.setImage(UIImage(systemName: "line.horizontal.3"), for: .normal)
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .black
@@ -60,7 +64,7 @@ final class TagModalViewController: UIViewController, UICollectionViewDelegate {
 
     private func configureLayout() {
         horizontalStackView.addArrangedSubview(label)
-        horizontalStackView.addArrangedSubview(circleButton)
+        horizontalStackView.addArrangedSubview(ellipseButton)
 
         mainStackView.addArrangedSubview(horizontalStackView)
         if let tagCollectionView {
@@ -103,48 +107,51 @@ final class TagModalViewController: UIViewController, UICollectionViewDelegate {
     }
 }
 
-protocol TagCreationDelegate: AnyObject {
-    func didCreateTag(tag: String)
-}
-
-extension TagModalViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, TagCreationDelegate {
+extension TagModalViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
     func collectionView(
         _ collectionView: UICollectionView,
         layout _: UICollectionViewLayout,
         sizeForItemAt _: IndexPath
     ) ->
-        CGSize {
+    CGSize {
         let padding: CGFloat = 10
         let totalPadding = padding * (2 - 1)
         let individualPadding = totalPadding / 2
         let width = (collectionView.bounds.width - totalPadding) / 2
         let height: CGFloat = 70
-
+        
         return CGSize(width: width - individualPadding, height: height)
     }
-
+    
     func collectionView(
         _: UICollectionView,
         numberOfItemsInSection _: Int
     ) -> Int {
         dataSource.count
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: TagCollectionViewCell.id,
-            for: indexPath
-        ) as? TagCollectionViewCell else {
-            return UICollectionViewCell()
-        }
-
-        cell.tagLabel.text = dataSource[indexPath.item]
+        //        guard let cell = collectionView.dequeueReusableCell(
+        //            withReuseIdentifier: TagCollectionViewCell.id,
+        //            for: indexPath
+        //        ) as? TagCollectionViewCell else {
+        //            return UICollectionViewCell()
+        //        }
+        //
+        //        cell.tagLabel.text = dataSource[indexPath.item]
+        //        return cell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TagCollectionViewCell.id, for: indexPath) as? TagCollectionViewCell else {
+                    return UICollectionViewCell()
+                }
+        let tag = tagList.tagList[indexPath.item]
+        cell.configureWithTag(tag)
+        
         return cell
     }
-
+    
     func collectionView(
         _: UICollectionView,
         didSelectItemAt _: IndexPath
@@ -153,8 +160,10 @@ extension TagModalViewController: UICollectionViewDataSource, UICollectionViewDe
         tagConfigView.delegate = self // 이 부분이 중요
         present(tagConfigView, animated: true, completion: nil)
     }
+}
 
-    func didCreateTag(tag: String) {
+extension TagModalViewController: TagCreationDelegate{
+    func createTag(tag: String) {
         TagCollectionViewData.data.append(tag)
         print("태그 추가")
         print("Updated data: \(TagCollectionViewData.data)")
