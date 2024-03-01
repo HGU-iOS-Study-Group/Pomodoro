@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/danielgindi/Charts.git",
       "state" : {
-        "revision" : "0a229f8c914b0ec93798cee058cf75b339297513",
-        "version" : "5.0.0"
+        "revision" : "dd9c72e3d7e751e769971092a6bd72d39198ae63",
+        "version" : "5.1.0"
       }
     },
     {
@@ -15,7 +15,7 @@
       "location" : "https://github.com/HGU-iOS-Study-Group/PomodoroDesignSystem.git",
       "state" : {
         "branch" : "main",
-        "revision" : "6c0144f11e486bd0f7392654b616bff9405db0cb"
+        "revision" : "7c4b876f1c8eb1dbfcfcf996be7451807144bc09"
       }
     },
     {
