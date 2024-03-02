@@ -43,7 +43,7 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CEB721902B6DECC7001AB9C1"
+               BlueprintIdentifier = "B0F65EE22B91D3190038012A"
                BuildableName = "PomodoroTests.xctest"
                BlueprintName = "PomodoroTests"
                ReferencedContainer = "container:Pomodoro.xcodeproj">
