@@ -223,9 +223,17 @@ extension MainViewController: PomodoroStepRememberable {
     }
 
     @objc private func timeSetting() {
-        let timeSettingviewController = TimeSettingViewController(isSelectedTime: false, delegate: self)
-        setUpPomodoroCurrentStepLabel()
-        navigationController?.pushViewController(timeSettingviewController, animated: true)
+        let timeSettingViewController = TimeSettingViewController(isSelectedTime: false, delegate: self)
+        if let sheet = timeSettingViewController.sheetPresentationController {
+            sheet.detents = [
+                .custom { context in
+                    context.maximumDetentValue * 0.95
+                }
+            ]
+            sheet.preferredCornerRadius = 40
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = true
+        }
+        present(timeSettingViewController, animated: true)
     }
 
     func setupNotification() {
@@ -326,7 +334,7 @@ extension MainViewController: PomodoroStepRememberable {
         guard let pomodoroStep else {
             return
         }
-        currentStepLabel.text = pomodoroStep.setUpLabelInCurrentStep() ?? "eror"
+        currentStepLabel.text = pomodoroStep.setUpLabelInCurrentStep()
     }
 }
 
@@ -382,6 +390,7 @@ extension MainViewController {
 extension MainViewController: TimeSettingViewControllerDelegate {
     func didSelectTime(time: Int) {
         pomodoroTimeManager.setupMaxTime(time: time)
+        updateTimeLabel()
     }
 }
 
