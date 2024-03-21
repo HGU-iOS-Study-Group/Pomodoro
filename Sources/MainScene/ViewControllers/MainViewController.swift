@@ -19,13 +19,10 @@ final class MainViewController: UIViewController {
     var stepManager = PomodoroStepManger()
     private var currentPomodoro: Pomodoro?
 
-    private lazy var longPressGestureRecognizer = UILongPressGestureRecognizer(
-        target: self,
-        action: #selector(handleLongPress)
-    ).then {
-        view.addGestureRecognizer($0)
-        $0.isEnabled = false
-    }
+    private let longPressGestureRecognizer = UILongPressGestureRecognizer()
+
+    // 시간라벨 누르게 하는 GestureRecognizer
+    private let timeLabelTapGestureRecognizer = UITapGestureRecognizer()
 
     lazy var currentStepLabel = UILabel().then {
         $0.text = stepManager.label.setUpLabelInCurrentStep(currentStep: stepManager.router.currentStep)
@@ -34,21 +31,30 @@ final class MainViewController: UIViewController {
 
     private let timeLabel = UILabel().then {
         $0.textAlignment = .center
-        $0.font = UIFont.systemFont(ofSize: 60, weight: .heavy)
+        $0.font = UIFont.pomodoroFont.heading1()
+        $0.textColor = UIColor.pomodoro.blackHigh
+    }
+
+    private lazy var tapGestureRecognizer = UITapGestureRecognizer(
+        target: self,
+        action: #selector(setPomodoroTime)
+    ).then {
+        timeLabel.isUserInteractionEnabled = true
+        timeLabel.addGestureRecognizer($0)
     }
 
     private let longPressGuideLabel = UILabel().then {
         $0.text = "길게 클릭해서 타이머를 정지할 수 있어요"
         $0.textAlignment = .center
         $0.textColor = .lightGray
-        $0.font = UIFont.systemFont(ofSize: 16)
+        $0.font = UIFont.pomodoroFont.heading6()
         $0.isHidden = true
     }
 
     private let progressBar = UIProgressView().then {
         $0.progressViewStyle = .default
-        $0.trackTintColor = .lightGray
-        $0.progressTintColor = .systemBlue
+        $0.trackTintColor = UIColor.pomodoro.disabled
+        $0.progressTintColor = UIColor.pomodoro.primary900
         $0.progress = 0.0
         $0.isHidden = true
     }
@@ -75,7 +81,43 @@ final class MainViewController: UIViewController {
         $0.setTitle("시간 설정", for: .normal)
         $0.titleLabel?.font = UIFont.pomodoroFont.heading6(size: 12)
         $0.setTitleColor(.pomodoro.blackHigh, for: .normal)
-        $0.addTarget(self, action: #selector(timeSetting), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(setPomodoroTime), for: .touchUpInside)
+    }
+
+    private let appIconStackView = UIStackView()
+
+    func setupPomodoroIcon() {
+        let logoIcon = UIImageView().then {
+            $0.image = UIImage(named: "dashboardIcon")
+        }
+        let appName = UILabel().then {
+            $0.text = "뽀모도로"
+            $0.textColor = .pomodoro.primary900
+            $0.font = .pomodoroFont.text1(size: 15.27)
+        }
+
+        appIconStackView.addArrangedSubview(logoIcon)
+        appIconStackView.addArrangedSubview(appName)
+        appIconStackView.spacing = 5
+        appIconStackView.axis = .horizontal
+        appIconStackView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.leading.equalTo(30)
+        }
+    }
+
+    private func setupLongPressGestureRecognizer() {
+        view.addGestureRecognizer(longPressGestureRecognizer)
+        longPressGestureRecognizer.addTarget(self, action: #selector(handleLongPress))
+        longPressGestureRecognizer.isEnabled = false
+        longPressGestureRecognizer.allowableMovement = .infinity
+        longPressGestureRecognizer.minimumPressDuration = 0.2
+    }
+
+    private func setupTimeLabelTapGestureRecognizer() {
+        timeLabel.addGestureRecognizer(timeLabelTapGestureRecognizer)
+        timeLabelTapGestureRecognizer.addTarget(self, action: #selector(setPomodoroTime))
+        timeLabelTapGestureRecognizer.isEnabled = true
     }
 
     override func viewDidLoad() {
@@ -98,9 +140,12 @@ final class MainViewController: UIViewController {
         )
 
         view.backgroundColor = .pomodoro.background
+
         addSubviews()
+        setupPomodoroIcon()
         setupConstraints()
-        setupLongPress(isEnable: false)
+
+        setupLongPressGestureRecognizer()
     }
 
     deinit {
@@ -158,12 +203,6 @@ extension MainViewController {
         present(navigationController, animated: true, completion: nil)
     }
 
-    private func setupLongPress(isEnable: Bool) {
-        longPressGestureRecognizer.isEnabled = isEnable
-        longPressGestureRecognizer.allowableMovement = .infinity
-        longPressGestureRecognizer.minimumPressDuration = 0.2
-    }
-
     @objc private func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
         progressBar.isHidden = false
 
@@ -204,7 +243,7 @@ extension MainViewController {
 
             pomodoroTimeManager.stopTimer {
                 setupUIWhenTimerStart(isStopped: true)
-                setupLongPress(isEnable: false)
+                self.longPressGestureRecognizer.isEnabled = false
             }
 
             stepManager.timeSetting.initPomodoroStep()
@@ -267,7 +306,7 @@ extension MainViewController {
         longPressTime = 0.0
         progressBar.progress = 0.0
 
-        setupLongPress(isEnable: true)
+        longPressGestureRecognizer.isEnabled = true
 
         // 강제종료 이후 정보 불러온 상황이 아닐때 (클릭 상황)
         if pomodoroTimeManager.isRestored == false {
@@ -300,7 +339,7 @@ extension MainViewController {
 
                 setUpPomodoroCurrentStep()
 
-                setupLongPress(isEnable: false)
+                self.longPressGestureRecognizer.isEnabled = false
             }
 
             timeLabel.text = String(format: "%02d:%02d", minutes, seconds)
@@ -330,6 +369,7 @@ extension MainViewController {
 
 extension MainViewController {
     private func addSubviews() {
+        view.addSubview(appIconStackView)
         view.addSubview(countButton)
         view.addSubview(timeLabel)
         view.addSubview(tagButton)
@@ -357,7 +397,7 @@ extension MainViewController {
         }
         timeLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().multipliedBy(0.67)
+            make.centerY.equalToSuperview().offset(-30)
         }
         timeButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
