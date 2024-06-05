@@ -50,15 +50,16 @@ final class PomodoroRouter {
         )
     }
 
-    func savePomodoroStepCounter() {
-        let data = try? RealmService.read(Pomodoro.self)
-        guard let currentData = data?.last else {
-            return
-        }
-        RealmService.update(currentData) { data in
-            data.phase = self.pomodoroCount
-        }
-    }
+    // FIXME: 사용하지 않는 메소드
+//    func savePomodoroStepCounter() {
+//        let data = try? RealmService.read(Pomodoro.self)
+//        guard let currentData = data?.last else {
+//            return
+//        }
+//        RealmService.update(currentData) { data in
+//            data.phase = self.pomodoroCount
+//        }
+//    }
 
     func navigatorToCurrentStep(
         currentStep: PomodoroTimerStep,
@@ -95,11 +96,10 @@ final class PomodoroRouter {
             currentStep = .rest(count: pomodoroCount)
         case let .focus(count):
             currentStep = .rest(count: count)
-            updateCurrentPomodoroStepData(count: count)
+//            updateCurrentPomodoroStepData(count: count)
         case var .rest(count):
-            count = pomodoroCount
+            pomodoroCount += 1
             if count < maxStep {
-                pomodoroCount += 1
                 currentStep = .focus(count: pomodoroCount)
             } else {
                 currentStep = .end
@@ -108,15 +108,15 @@ final class PomodoroRouter {
         case .end:
             pomodoroCount = 0
         }
+
         return currentStep
     }
 
     func updateCurrentPomodoroStepData(count: Int) {
-        let data = (try? RealmService.read(Pomodoro.self).last) ?? Pomodoro()
+        guard let data = try? RealmService.read(Pomodoro.self).last else { return }
         RealmService.update(data) { data in
             data.phase = count
-        }
-        RealmService.update(data) { data in
+
             if count == self.maxStep {
                 data.isSuccess = true
             }
@@ -204,7 +204,8 @@ final class PomodoroStepLabel {
             return ""
         case var .rest(count), var .focus(count):
             count = pomodoroCurrentCount
-            if count == .zero {
+            if count == 4 {
+                pomodoroCurrentCount = 0
                 return ""
             }
             return "\(count + 1) 회차"
