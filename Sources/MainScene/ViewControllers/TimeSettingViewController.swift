@@ -14,6 +14,7 @@ protocol TimeSettingViewControllerDelegate: AnyObject {
 }
 
 final class TimeSettingViewController: UIViewController {
+
     private var isSelectedTime: Bool = false
     private let colletionViewIdentifier = "TimerCollectionViewCell"
     private var centerIndexPath: IndexPath?
@@ -22,7 +23,8 @@ final class TimeSettingViewController: UIViewController {
     private let pomodoroTimeManager = PomodoroTimeManager.shared
     private var endTime: String?
     private var isSelectedCellBiggerfive: Bool = true
-    private let stepManager = PomodoroStepManger()
+    var stepManager = PomodoroStepManger()
+    private lazy var breakTime = stepManager.timeSetting.setUpBreakTime()
 
     private weak var delegate: TimeSettingViewControllerDelegate?
 
@@ -172,7 +174,7 @@ final class TimeSettingViewController: UIViewController {
         let currentTime = Date()
 
         guard let endTime = Calendar.current.date(
-            byAdding: .second, value: selectedTime, to: currentTime
+            byAdding: .second, value: (selectedTime + breakTime) * 4, to: currentTime
         ) else {
             return
         }
