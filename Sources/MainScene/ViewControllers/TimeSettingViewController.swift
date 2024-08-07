@@ -30,6 +30,7 @@ final class TimeSettingViewController: UIViewController {
     init(delegate: TimeSettingViewControllerDelegate) {
         super.init(nibName: nil, bundle: nil)
         selectedTime = pomodoroTimeManager.maxTime / 60
+        print(pomodoroTimeManager.maxTime)
         self.delegate = delegate
     }
 
@@ -183,7 +184,7 @@ final class TimeSettingViewController: UIViewController {
 
     private func didTapConfirmButton() {
         Log.debug("Selected Time: \(Int(centerIndexPath?.item ?? 0))")
-        delegate?.didSelectTime(time: Int(centerIndexPath?.item ?? 0))
+        delegate?.didSelectTime(time: Int(centerIndexPath?.item ?? 0) * 60)
         dismiss(animated: true)
     }
 
@@ -263,7 +264,7 @@ extension TimeSettingViewController: UIScrollViewDelegate, UICollectionViewDeleg
         guard let centerIndexPathCalculation = collectionView.indexPathForItem(at: center) else {
             return
         }
-        let currentTimeInMinutes = centerIndexPathCalculation.item * 60
+        let currentTimeInMinutes = centerIndexPathCalculation.item
         let minutes = currentTimeInMinutes / 60
         let seconds = currentTimeInMinutes % 60
         titleTime.text = String(format: "%02d:%02d", minutes, seconds)
