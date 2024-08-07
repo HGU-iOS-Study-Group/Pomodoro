@@ -17,7 +17,7 @@ final class BreakTimerViewController: UIViewController, TimeSettingViewControlle
     private var timer: Timer?
     private var notificationId = UUID().uuidString
     private var currentTime = 0
-    private lazy var maxTime: Int = stepManager.timeSetting.setUpBreakTime()
+    private lazy var maxTime: Int = stepManager.timeSetting.setUpBreakTime() * 60
     private var timerHeightConstraint: Constraint?
     var stepManager = PomodoroStepManger()
     private let timeLabel = UILabel().then {

@@ -158,6 +158,8 @@ final class MainViewController: UIViewController {
         setupLongPressGestureRecognizer()
         setupTimeLabelTapGestureRecognizer()
         setupRecentPomodoroData()
+
+        print(pomodoroTimeManager.maxTime)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -207,13 +209,13 @@ final class MainViewController: UIViewController {
             timeLabel.attributedText = nil
 
             // 배포용
-//            pomodoroTimeManager.setupMaxTime(
-//                time: (recent?.phaseTime ?? 25) * 60
-//            )
-
             pomodoroTimeManager.setupMaxTime(
                 time: (recent?.phaseTime ?? 25)
             )
+//            테스트용
+//            pomodoroTimeManager.setupMaxTime(
+//                time: (recent?.phaseTime ?? 25)
+//            )
 
             timeLabel.text = String(
                 format: "%02d:%02d",
@@ -346,8 +348,6 @@ extension MainViewController {
 
             stepManager.timeSetting.initPomodoroStep()
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-
-            setupRecentPomodoroData()
 
             stopTimeProgressBar.isHidden = true
             longPressGuideLabel.isHidden = true
