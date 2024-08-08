@@ -322,12 +322,6 @@ extension MainViewController {
             longPressTime = 0.0
             stopTimeProgressBar.progress = 0.0
             longPressTimer?.invalidate()
-
-            guard let current = try? RealmService.read(Pomodoro.self).last else { return }
-            RealmService.update(current) { pomodoro in
-                pomodoro.phase = -1
-                pomodoro.isIng = false
-            }
         }
     }
 
@@ -354,6 +348,17 @@ extension MainViewController {
             longPressGuideLabel.isHidden = true
             tagButton.isUserInteractionEnabled = true
             updateTimeLabelUI()
+
+            // swiftlint:disable all
+            Log.debug(try! RealmService.read(Pomodoro.self).map {
+                "\($0.phase) \($0.isSuccess) \($0.participateDate)"
+            }.joined(separator: "\n"))
+
+            guard let current = try? RealmService.read(Pomodoro.self).last else { return }
+            RealmService.update(current) { pomodoro in
+                pomodoro.phase = -1
+                pomodoro.isIng = false
+            }
         }
     }
 
