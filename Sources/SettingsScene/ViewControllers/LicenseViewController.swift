@@ -4,19 +4,21 @@
 //
 //  Created by 승해손 on 8/7/24.
 //
+// swiftlint:disable all
 
-import UIKit
 import PomodoroDesignSystem
+import UIKit
 
 class LicenseViewController: UIViewController {
     private let licenseText = UITextView()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .pomodoro.background
         setupTextView()
         loadLicenseText()
     }
+
     private func setupTextView() {
         view.addSubview(licenseText)
         licenseText.isScrollEnabled = true
@@ -28,7 +30,7 @@ class LicenseViewController: UIViewController {
             make.edges.equalToSuperview().inset(16)
         }
     }
-    
+
     private func loadLicenseText() {
         licenseText.text = """
         SnapKit

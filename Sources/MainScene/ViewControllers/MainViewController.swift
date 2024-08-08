@@ -430,6 +430,12 @@ extension MainViewController {
         }
         currentPomodoro = try? RealmService.read(Pomodoro.self).last
 
+        if tagButton.titleLabel?.text == nil {
+            tagButton.setImage(nil, for: .normal)
+            tagButton.setTitle(currentTag.tagName, for: .normal)
+            tagButton.backgroundColor = currentTag.setupTagTypoColor()
+        }
+
         setupUIWhenTimerStart(isStopped: false)
         pomodoroTimeManager.startTimer(timerBlock: { [self] timer, currentTime, maxTime in
             let minutes = (maxTime - currentTime) / 60
