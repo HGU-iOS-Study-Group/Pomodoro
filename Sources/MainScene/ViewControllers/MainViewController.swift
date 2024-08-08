@@ -349,8 +349,10 @@ extension MainViewController {
             stepManager.timeSetting.initPomodoroStep()
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
 
+            setupRecentPomodoroData()
             stopTimeProgressBar.isHidden = true
             longPressGuideLabel.isHidden = true
+            tagButton.isUserInteractionEnabled = true
             updateTimeLabelUI()
         }
     }
