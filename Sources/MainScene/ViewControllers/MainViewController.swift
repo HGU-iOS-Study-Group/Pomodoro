@@ -210,7 +210,7 @@ final class MainViewController: UIViewController {
 
             // 배포용
             pomodoroTimeManager.setupMaxTime(
-                time: (recent?.phaseTime ?? 25)
+                time: (recent?.phaseTime ?? 25 * 60)
             )
 //            테스트용
 //            pomodoroTimeManager.setupMaxTime(
